@@ -35,10 +35,13 @@ static int DifficultyChooser()
     }
 }
 
-static bool YourAttempt(int computer_choice)
+static bool YourAttempt(int computer_choice, int difficulty, bool more_less_mode)
 {
     string numbers = "1234567890";
     string your_choice;
+    string more_or_less_output;
+
+
     cout << "Your attempt: ";
     cin >> your_choice;
 
@@ -58,6 +61,13 @@ static bool YourAttempt(int computer_choice)
     }
     else
     {
+        more_or_less_output = your_choice_int > computer_choice ? "More than guessed number" : "Less than guessed number";
+
+        if (more_less_mode) 
+        {
+                cout << more_or_less_output << endl;
+        }
+
         cout << "No, it isn't" << endl;
         return false;
     }
@@ -75,23 +85,51 @@ static int Attempts(int difficulty)
     return attempts;
 }
 
+static bool MoreOrLossMode(int difficulty)
+{
+    string yes_no_answer{};
+    bool more_less_mode = false;
+
+    if (difficulty == 100)
+    {
+        cout << "Enable Less or More mode? (yes or no): ";
+        cin >> yes_no_answer;
+
+        if (yes_no_answer == "yes")
+        {
+            more_less_mode = true;
+        }
+        else if (yes_no_answer == "no")
+        {
+            more_less_mode = false;
+        }
+        else
+        {
+            cout << "Error: unexpected answer" << endl;
+        }
+    }
+
+    return more_less_mode;
+}
+
 static void GuessTheNumber()
 {
     int difficulty = DifficultyChooser();
     int computer_choice = ComputerRandChoice(difficulty);
     size_t attempts = Attempts(difficulty);
+    bool more_less_mode = MoreOrLossMode(difficulty);
     bool result = false;
 
     while ( (attempts != 0) and result != true)
     {
         cout << "You have " << attempts << " attempts" << endl;
         attempts--;
-        result = YourAttempt(computer_choice);
+        result = YourAttempt(computer_choice, difficulty, more_less_mode);
     }
 
     if (result == true)
     {
-        cout << "You WIN!";
+        cout << "You WIN!" << endl;
     }
     else
     {
@@ -101,9 +139,32 @@ static void GuessTheNumber()
 
 int main()
 {
-    cout << "Welcome to the GuessRandomNumber" << endl;
+    bool retry = false;
+    string yes_or_no_answer{};
 
-    GuessTheNumber();
+    while (!retry)
+    {
+        srand(time(0));
+        cout << "Welcome to the GuessRandomNumber" << endl;
+
+        GuessTheNumber();
+
+        cout << "Do you want retry? (yes or no): ";
+        cin >> yes_or_no_answer;
+
+        if (yes_or_no_answer == "yes")
+        {
+            retry = false;
+        } 
+        else if (yes_or_no_answer == "no")
+        {
+            retry = true;
+        }
+        else
+        {
+            cout << "Error: unexpected input" << endl;
+        }
+    }
 
     return 0;
 }
